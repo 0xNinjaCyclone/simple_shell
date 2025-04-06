@@ -4,23 +4,17 @@
 /**
  * get_av_with_flags_helper - .
  * @token: .
- * @line: .
- * @av: .
  * @status: .
  * Return: .
 */
 
-char *get_av_with_flags_helper(char *token, char *line, char **av, int status)
+char *get_av_with_flags_helper(char *token, int status)
 {
-		char *var, *cmd, *line_cpy;
+	char *var, *cmd;
 
-	line_cpy = line;
-		if (token == NULL)
-	{
-		free(av);
-		free(line_cpy);
-		return (NULL);
-	}
+	if ( !token )
+		return NULL;
+
 	if (_strcmp("$$", token) == 0)
 		cmd = get_process_id();
 	else if (_strcmp("$?", token) == 0)
@@ -56,10 +50,19 @@ char **get_av_with_flags(char *line, int status)
 	if (line_cpy == NULL)
 		return (NULL); /*can't cpy*/
 	c_count = char_count(line_cpy, ' ');
-	av = malloc((c_count + 1) * sizeof(char *));
+	
 	token = _strtok(line_cpy, TOK_D);
 
-	cmd = get_av_with_flags_helper(token, line, av, status);
+	cmd = get_av_with_flags_helper(token, status);
+	if ( !cmd )
+		return NULL;
+
+	av = malloc((c_count + 1) * sizeof(char *));
+	if ( !av ) {
+		free( cmd );
+		return NULL;
+	}
+
 	av[i++] = cmd;
 	while (token != NULL)
 	{
