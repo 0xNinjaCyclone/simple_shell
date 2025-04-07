@@ -41,7 +41,7 @@ char *get_av_with_flags_helper(char *token, int status)
 char **get_av_with_flags(char *line, int status)
 {
 	char *line_cpy, *token, **av, *var, *cmd;
-	int i = 0, c_count;
+	int i = 0, j, c_count;
 
 	handle_comments(line);
 	if (line[0] == '\0')
@@ -49,10 +49,19 @@ char **get_av_with_flags(char *line, int status)
 	line_cpy = _strdup(line);
 	if (line_cpy == NULL)
 		return (NULL); /*can't cpy*/
-	c_count = char_count(line_cpy, ' ');
 	
+	token = TOK_D;
+	c_count = char_count(line_cpy, ' ');
+	for ( ; i < (int) strlen(line_cpy); i++ ) 
+		for ( j = 0; j < (int) strlen(token); j++ )
+			if ( line_cpy[i] == token[j] ) {
+				c_count++;
+				break;
+			}
+			
+	i ^= i;
 	token = _strtok(line_cpy, TOK_D);
-
+	
 	cmd = get_av_with_flags_helper(token, status);
 	if ( !cmd )
 		return NULL;
